@@ -1,7 +1,15 @@
-const WebSocket = require("ws");
-const wss = new WebSocket.Server({ port: 8080 });
+const PORT = process.env.PORT || 3000;
+const INDEX = '/index.html';
+
+const server = express()
+  .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
+  .listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+const { Server } = require('ws');
+const wss = new Server({ server });
+
 var pdf = require("pdf-creator-node");
-var fs = require("fs");
+var fs = require("fs"); 
 
 let members = [];
 let notes = [];
@@ -175,12 +183,12 @@ wss.on("connection", (ws) => {
           },
           type: "buffer",
         };
-        
+
         const pdfStream = await pdf.create(document, {
           format: "A4"
         })
 
-        ws.send(pdfStream, {binary: true});
+        ws.send(pdfStream, { binary: true });
         break;
     }
   });
